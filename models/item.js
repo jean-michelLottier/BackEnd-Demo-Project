@@ -23,6 +23,16 @@ class Item {
         }
     }
 
+    toString() {
+        return "id: "               + this.id               + "\n" +
+                "title: "           + this.title            + "\n" +
+                "description: "     + this.description      + "\n" +
+                "createdDate: "     + this.createdDate      + "\n" +
+                "category: "        + this.category         + "\n" +
+                "startExperience: " + this.startExperience  + "\n" +
+                "endExperience: "   + this.endExperience;
+    }
+
     static all(callback) {
         connection.query(`SELECT * FROM item`, (error, results, fields) => {
             if (error) {
@@ -43,38 +53,56 @@ class Item {
         })
     }
 
+    static getById(id, callback) {
+        connection.query(`SELECT * FROM item WHERE ID = ?`, id, (error, result, fields) => {
+            if(error) {
+                throw error
+            }
+            
+            if(result.length === 1) {
+                callback(new Item(result[0]))
+            } else {
+                callback(new Item())
+            }
+        })
+    }
+
     static create(item, callback) {
         let content = {TITLE: item.title, DESCRIPTION: item.description, CREATED_DATE: item.createdDate,
             CATEGORY: item.category, START_EXPERIENCE: item.startExperience, END_EXPERIENCE: item.endExperience}
 
-        connection.query(`INSERT INTO item SET ?`, content, (error, result, fields) => {
+        connection.query(`INSERT INTO item SET ?`, content, (error, results, fields) => {
             if(error) {
                 throw error
             }
 
-            callback(result)
+            callback(results.insertId)
         })
     }
 
     static update(item, callback) {
-        let content = [item.title, item.description, item.category, item.startExperience, item.endExperience]
+        let content = [item.title, item.description, item.category, item.startExperience, item.endExperience, item.id]
         connection.query(`UPDATE item SET TITLE = ?, DESCRIPTION = ?, CATEGORY = ?, 
-        START_EXPERIENCE = ?, END_EXPERIENCE`, content, (error, result, fields) => {
+        START_EXPERIENCE = ?, END_EXPERIENCE = ? WHERE ID = ?`, content, (error, results, fields) => {
             if(error) {
                 throw error
             }
 
-            callback(result)
+            if(results.changedRows !== 1) {
+                throw new Error("Failed to update item with id: " + item.id)
+            }
+
+            callback(results.changedRows)
         })
     }
 
     static delete(id, callback) {
-        connection.query(`DELETE FROM item WHERE ID = ?`, id, (error, result, fields) => {
+        connection.query(`DELETE FROM item WHERE ID = ?`, id, (error, results, fields) => {
             if(error) {
                 throw error
             }
 
-            callback(result)
+            callback(results.affectedRows)
         })
     }
 }
