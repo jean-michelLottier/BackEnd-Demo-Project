@@ -6,36 +6,40 @@ services:
             restart_policy:
                 condition: on-failure
                 delay: 5s
-                max-attempts: 3
+                max_attempts: 3
                 window: 60s
         ports:
             - "8080:8080"
-        links:
-            - server
+        networks:
+            - frontend
     server:
         image: jlot/backend-demo-project:latest
         deploy:
             restart_policy:
                 condition: on-failure
                 delay: 5s
-                max-attempts: 3
-                window: 60s	
+                max_attempts: 3
+                window: 60s
         ports:
             - "8081:8081"
         depends_on:
             - db
-        links:
-            - webapp
-            - db
+        networks:
+            - frontend
+            - backend
     db:
         image: jlot/database-demo-project:latest
         deploy:
             restart_policy:
                 condition: on-failure
                 delay: 5s
-                max-attempts: 3
-                window: 120s	
+                max_attempts: 3
+                window: 120s
         ports:
             - "3306:3306"
-        links:
-            - server
+        networks:
+            - backend
+            
+networks:
+    frontend:
+    backend:

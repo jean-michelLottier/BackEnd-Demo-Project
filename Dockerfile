@@ -9,7 +9,7 @@ COPY . /demo_project
 
 RUN useradd -m back; cd /demo_project
 
-USER back
+#USER back
 
 EXPOSE 8081
 
