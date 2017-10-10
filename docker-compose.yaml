@@ -2,24 +2,24 @@ version: '3'
 services:
     webapp:
         image: jlot/frontend-demo-project:latest
-        deploy:
-            restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 3
-                window: 60s
+        #deploy:
+            #restart_policy:
+                #condition: on-failure
+                #delay: 5s
+                #max_attempts: 3
+                #window: 60s
         ports:
             - "8080:8080"
         networks:
             - frontend
     server:
         image: jlot/backend-demo-project:latest
-        deploy:
-            restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 3
-                window: 60s
+        #deploy:
+            #restart_policy:
+                #condition: on-failure
+                #delay: 5s
+                #max_attempts: 3
+                #window: 60s
         ports:
             - "8081:8081"
         depends_on:
@@ -29,12 +29,12 @@ services:
             - backend
     db:
         image: jlot/database-demo-project:latest
-        deploy:
-            restart_policy:
-                condition: on-failure
-                delay: 5s
-                max_attempts: 3
-                window: 120s
+        #deploy:
+            #restart_policy:
+                #condition: on-failure
+                #delay: 5s
+                #max_attempts: 3
+                #window: 120s
         ports:
             - "3306:3306"
         networks:
