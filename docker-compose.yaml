@@ -2,44 +2,57 @@ version: '3'
 services:
     webapp:
         image: jlot/frontend-demo-project:latest
-        #deploy:
-            #restart_policy:
-                #condition: on-failure
-                #delay: 5s
-                #max_attempts: 3
-                #window: 60s
+        container_name: frontend
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 3
+                window: 60s
         ports:
             - "8080:8080"
+        links:
+            - server
+            
         networks:
-            - frontend
+            main:
+                aliases:
+                    - frontend
     server:
         image: jlot/backend-demo-project:latest
-        #deploy:
-            #restart_policy:
-                #condition: on-failure
-                #delay: 5s
-                #max_attempts: 3
-                #window: 60s
+        container_name: backend
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 3
+                window: 60s
         ports:
             - "8081:8081"
         depends_on:
             - db
+        links:
+            - db
         networks:
-            - frontend
-            - backend
+            main:
+                aliases:
+                    - backend
     db:
         image: jlot/database-demo-project:latest
-        #deploy:
-            #restart_policy:
-                #condition: on-failure
-                #delay: 5s
-                #max_attempts: 3
-                #window: 120s
+        container_name: database
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 3
+                window: 120s
         ports:
             - "3306:3306"
         networks:
-            - backend
+            main:
+                aliases:
+                    - database
             
 networks:
-    frontend:
-    backend:
+    main:
+        driver: bridge

@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 
 let whiteList = ["http://localhost:4200", "http://127.0.0.1:4200", 
-                    "http://192.168.99.100:8080", "http://webapp:8080", "http://demoproject:8080"]
+                    "http://192.168.99.100:8081", "http://webapp:8081", "http://demoproject:8081"]
 let corsOptions = {
     origin: (origin, callback) => {
         if(whiteList.indexOf(origin) !== -1) {
