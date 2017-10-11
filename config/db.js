@@ -3,7 +3,7 @@ let LOGGER = require('./logger');
 
 let connection = mysql.createPool({
     connectionLimit : 10,
-    host     : '0.0.0.0',
+    host     : 'db',
     user     : 'root',
     password : 'password',
     database : 'my_cv'
