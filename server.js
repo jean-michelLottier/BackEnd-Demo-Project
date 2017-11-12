@@ -19,7 +19,10 @@ app.use(cookieParser(passphrase))
 app.use(session({
     name: 'mydemoproject-session',
     store: new RedisStore({
-        host: 'demoproject',
+        // Mode local
+        /*host: 'demoproject',*/
+        // Mode docker
+        host: 'redis',
         port: '6379', 
         db: 0,
         ttl: 60, 
