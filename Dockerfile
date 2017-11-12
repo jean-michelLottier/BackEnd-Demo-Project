@@ -9,8 +9,6 @@ COPY . /demo_project
 
 RUN useradd -m back; cd /demo_project
 
-USER back
-
 EXPOSE 8081
 
 CMD ["npm", "run", "start", "--host=0.0.0.0"]
