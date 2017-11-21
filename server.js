@@ -8,7 +8,8 @@ let LOGGER      = require('./config/logger')
 let Item        = require('./models/item')
 let Category    = require('./models/category')
 let User        = require('./models/user')
-let utils        = require('./utils/utils')
+let utils       = require('./utils/utils')
+let Language    = require('./models/language')
 
 let app = express()
 let passphrase = 'This is the secret passphrase'
@@ -20,7 +21,7 @@ app.use(session({
     name: 'mydemoproject-session',
     store: new RedisStore({
         // Mode local
-        /*host: 'demoproject',*/
+        /* host: 'demoproject', */
         // Mode docker
         host: 'redis',
         port: '6379', 
@@ -49,19 +50,21 @@ let corsOptions = {
 
 app.use(cors(corsOptions))
 
-app.get('/education', (request, response) => {
+app.get('/:lang/education', (request, response) => {
     LOGGER.log('info', 'request GET /education called')
     
     if(request.session.user != undefined) {
         request.session.cookie.expires = utils.initExpireCookie()
     } else {
-        LOGGER.log('warning', 'No session loaded to access the education category')
+        LOGGER.log('warn', 'No session loaded to access the education category')
         response.status(401).end('The user is not logged')
         return
     }
 
+    let language = utils.checkLanguage(request.params.lang)
+
     try {
-        Item.getByCategory(Category.EDUCATION, items => {
+        Item.getByCategory(Category.EDUCATION, language, items => {
             response.setHeader('Content-Type', 'application/json')
             response.json(items)
             response.status(200).end()
@@ -72,19 +75,21 @@ app.get('/education', (request, response) => {
     }
 })
 
-app.get('/professional_experience', (request, response) => {
+app.get('/:lang/professional_experience', (request, response) => {
     LOGGER.log('info', 'request GET /porfessional_experience called')
 
     if(request.session.user != undefined) {
         request.session.cookie.expires = utils.initExpireCookie()
     } else {
-        LOGGER.log('warning', 'No session loaded to access the professional experience category')
+        LOGGER.log('warn', 'No session loaded to access the professional experience category')
         response.status(401).end('The user is not logged')
         return
     }
 
+    let language = utils.checkLanguage(request.params.lang)
+
     try {
-        Item.getByCategory(Category.PROFESSIONAL_EXPERIENCE, items => {
+        Item.getByCategory(Category.PROFESSIONAL_EXPERIENCE, language, items => {
             response.setHeader('Content-Type', 'application/json')
             response.json(items)
             response.status(200).end()
@@ -95,19 +100,21 @@ app.get('/professional_experience', (request, response) => {
     }
 })
 
-app.get('/hobby', (request, response) => {
+app.get('/:lang/hobby', (request, response) => {
     LOGGER.log('info', 'request GET /hobby called')
 
     if(request.session.user != undefined) {
         request.session.cookie.expires = utils.initExpireCookie()
     } else {
-        LOGGER.log('warning', 'No session loaded to access the hobby category')
+        LOGGER.log('warn', 'No session loaded to access the hobby category')
         response.status(401).end('The user is not logged')
         return
     }
 
+    let language = utils.checkLanguage(request.params.lang)
+
     try {
-        Item.getByCategory(Category.HOBBY, items => {
+        Item.getByCategory(Category.HOBBY, language, items => {
             response.setHeader('Content-Type', 'application/json')
             response.json(items)
             response.status(200).end()
@@ -120,11 +127,11 @@ app.get('/hobby', (request, response) => {
 
 app.get('/item/:id', (request, response) => {
     LOGGER.log('info', 'request GET /item called')
-    
+
     if(request.session.user != undefined) {
         request.session.cookie.expires = utils.initExpireCookie()
     } else {
-        LOGGER.log('warning', 'No session loaded to access the item info')
+        LOGGER.log('warn', 'No session loaded to access the item info')
         response.status(401).end('The user is not logged')
         return
     }
@@ -153,7 +160,7 @@ app.get('/delete/:id', (request, response) => {
     if(request.session.user != undefined) {
         request.session.cookie.expires = utils.initExpireCookie()
     } else {
-        LOGGER.log('warning', 'No session loaded to access the delete action')
+        LOGGER.log('warn', 'No session loaded to access the delete action')
         response.status(401).end('The user is not logged')
         return
     }
@@ -180,7 +187,7 @@ app.post('/new', (request, response) => {
     if(request.session.user != undefined) {
         request.session.cookie.expires = utils.initExpireCookie()
     } else {
-        LOGGER.log('warning', 'No session loaded to access the creation action')
+        LOGGER.log('warn', 'No session loaded to access the creation action')
         response.status(401).end('The user is not logged')
         return
     }
@@ -216,6 +223,10 @@ app.post('/new', (request, response) => {
         item.endExperience = new Date(data.endExperience)
     }
 
+    if(data.language != undefined) {
+        item.language = utils.checkLanguage(data.language)
+    }
+
     item.createdDate = new Date()
 
     try {
@@ -236,7 +247,7 @@ app.post('/update', (request, response) => {
     if(request.session.user != undefined) {
         request.session.cookie.expires = utils.initExpireCookie()
     } else {
-        LOGGER.log('warning', 'No session loaded to access the update action')
+        LOGGER.log('warn', 'No session loaded to access the update action')
         response.status(401).end('The user is not logged')
         return
     }

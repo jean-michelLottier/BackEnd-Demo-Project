@@ -1,5 +1,6 @@
 let connection = require('../config/db')
 let LOGGER = require('../config/logger')
+let Language = require('../models/language')
 
 class Item {
 
@@ -12,6 +13,7 @@ class Item {
             this.category = row.CATEGORY
             this.startExperience = row.START_EXPERIENCE
             this.endExperience = row.END_EXPERIENCE
+            this.language = row.LANGUAGE
         } else {
             this.id
             this.title
@@ -20,6 +22,7 @@ class Item {
             this.category
             this.startExperience
             this.endExperience
+            this.language = Language.FRENCH
         }
     }
 
@@ -30,7 +33,8 @@ class Item {
                 "createdDate: "     + this.createdDate      + "\n" +
                 "category: "        + this.category         + "\n" +
                 "startExperience: " + this.startExperience  + "\n" +
-                "endExperience: "   + this.endExperience;
+                "endExperience: "   + this.endExperience    + "\n" +
+                "language: "        + this.language;
     }
 
     static all(callback) {
@@ -43,8 +47,9 @@ class Item {
         })
     }
 
-    static getByCategory(category, callback) {
-        connection.query(`SELECT * FROM item WHERE CATEGORY = ?`, category, (error, results, fields) => {
+    static getByCategory(category, language = Language.FRENCH, callback) {
+        connection.query(`SELECT * FROM item WHERE CATEGORY = ? AND LANGUAGE = ?`,
+         [category, language], (error, results, fields) => {
             if(error) {
                 throw error
             }
@@ -69,7 +74,8 @@ class Item {
 
     static create(item, callback) {
         let content = {TITLE: item.title, DESCRIPTION: item.description, CREATED_DATE: item.createdDate,
-            CATEGORY: item.category, START_EXPERIENCE: item.startExperience, END_EXPERIENCE: item.endExperience}
+            CATEGORY: item.category, START_EXPERIENCE: item.startExperience, 
+            END_EXPERIENCE: item.endExperience, LANGUAGE: item.language}
 
         connection.query(`INSERT INTO item SET ?`, content, (error, results, fields) => {
             if(error) {
