@@ -3,7 +3,10 @@ let LOGGER = require('./logger');
 
 let connection = mysql.createPool({
     connectionLimit : 10,
+    // Mode docker
     host     : 'db',
+    // Mode local
+    //host     : 'localhost',
     user     : 'root',
     password : 'password',
     database : 'my_cv'
