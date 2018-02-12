@@ -75,7 +75,7 @@ class Item {
     static create(item, callback) {
         let content = {TITLE: item.title, DESCRIPTION: item.description, CREATED_DATE: item.createdDate,
             CATEGORY: item.category, START_EXPERIENCE: item.startExperience, 
-            END_EXPERIENCE: item.endExperience, LANGUAGE: item.language}
+            END_EXPERIENCE: item.endExperience, LANGUAGE: item.language, USERFK: item.user}
 
         connection.query(`INSERT INTO item SET ?`, content, (error, results, fields) => {
             if(error) {

@@ -24,7 +24,7 @@ app.use(session({
     name: 'mydemoproject-session',
     store: new RedisStore({
         // Mode local
-        /* host: 'demoproject', */
+        // host: 'demoproject',
         // Mode docker
         host: 'redis',
         port: '6379', 
@@ -184,7 +184,7 @@ app.get('/delete/:id', (request, response) => {
     }
 })
 
-app.post('/new', (request, response) => {
+app.post('/new', async (request, response) => {
     LOGGER.log('info', 'request POST /new called')
 
     if(request.session.user != undefined) {
@@ -233,6 +233,8 @@ app.post('/new', (request, response) => {
     item.createdDate = new Date()
 
     try {
+        let user = await User.getUserByLogin(request.session.user)
+        item.user = user.id
         Item.create(item, (result) => {
             response.setHeader('Content-Type', 'application/json')
             response.json({result: result.toString()})
@@ -354,6 +356,7 @@ app.get('/:lang/businesscard', async (request, response) => {
 
     try{
         let businessCard = await BusinessCard.getBusinessCard(user, language)
+        businessCard.user = user
         response.setHeader('Content-Type', 'application/json')
         response.json(businessCard)
         response.status(200).end()
@@ -389,6 +392,7 @@ app.post('/businesscard/create', async (request, response) => {
         data.email != undefined ? businessCard.email = data.email : businessCard.email = null
         data.phone != undefined ? businessCard.phone = data.phone : businessCard.phone = null
         data.summary != undefined ? businessCard.summary = data.summary : businessCard.summary = null
+        data.title != undefined ? businessCard.title = data.title : businessCard.title = null
         businessCard.language = utils.checkLanguage(data.language)
 
         let result = await BusinessCard.create(businessCard)
@@ -430,6 +434,7 @@ app.post('/businesscard/update', async (request, response) => {
         data.email != undefined ? businessCard.email = data.email : businessCard.email = null
         data.phone != undefined ? businessCard.phone = data.phone : businessCard.phone = null
         data.summary != undefined ? businessCard.summary = data.summary : businessCard.summary = null
+        data.title != undefined ? businessCard.title = data.title : businessCard.title = null
 
         let result = await BusinessCard.update(businessCard)
         response.setHeader('Content-Type', 'application/json')

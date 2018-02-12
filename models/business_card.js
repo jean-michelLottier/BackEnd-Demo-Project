@@ -13,6 +13,7 @@ class BusinessCard {
             this.phone      = row.PHONE
             this.summary    = row.SUMMARY
             this.language   = row.LANGUAGE
+            this.title      = row.TITLE
         } else {
             this.id
             this.user
@@ -23,6 +24,7 @@ class BusinessCard {
             this.phone
             this.summary
             this.language
+            this.title
         }
     }
 
@@ -35,6 +37,7 @@ class BusinessCard {
                 "email: "       + this.email        + "\n" +
                 "phone: "       + this.phone        + "\n" +
                 "language: "    + this.language     + "\n" +
+                "title: "       + this.title        + "\n" +
                 "summary: "     + (this.summary === undefined? this.summary : this.summary.substring(0,20) + "...")
     }
 
@@ -60,7 +63,7 @@ class BusinessCard {
         return new Promise((resolve, reject) => {
             let content = {USERFK: businessCard.user, NAME: businessCard.name, LASTNAME: businessCard.lastname,
                 BIRTHDATE: businessCard.birthdate, EMAIL: businessCard.email, PHONE: businessCard.phone,
-                SUMMARY: businessCard.summary, LANGUAGE: businessCard.language}
+                SUMMARY: businessCard.summary, LANGUAGE: businessCard.language, TITLE: businessCard.title}
             connection.query(`INSERT INTO business_card SET ?`, content, (error, results, fields) => {
                 if(error) {
                     reject(error.message)
@@ -73,9 +76,10 @@ class BusinessCard {
 
     static update(businessCard) {
         return new Promise((resolve, reject) => {
-            let content = []
+            let content = [businessCard.name, businessCard.lastname, businessCard.birthdate,
+                businessCard.email, businessCard.phone, businessCard.summary, businessCard.title, businessCard.id]
             connection.query(`UPDATE business_card SET NAME = ?, LASTNAME = ?,
-                BIRTHDATE = ?, EMAIL = ?, PHONE = ?, SUMMARY = ? WHERE ID = ?`, 
+                BIRTHDATE = ?, EMAIL = ?, PHONE = ?, SUMMARY = ?, TITLE = ? WHERE ID = ?`, 
                 content, (error, results, fields) => {
                 if(error) {
                     reject(error.message)
