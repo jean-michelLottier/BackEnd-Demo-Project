@@ -48,8 +48,10 @@ class BusinessCard {
                 if(error) {
                     reject(error.message)
                 }
-
-                if(results.length === 1) {
+				
+				if(results === undefined) {
+					reject('Any business card found!')
+				} else if(results.length === 1) {
                     resolve(new BusinessCard(results[0]))
                 } else {
                     reject('No unique business card found!')
