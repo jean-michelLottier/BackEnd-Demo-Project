@@ -44,14 +44,14 @@ class BusinessCard {
     static getBusinessCard(user, language) {
         return new Promise((resolve, reject) => {
             connection.query(`SELECT * FROM business_card WHERE USERFK = 
-            (SELECT ID FROM USER WHERE EMAIL = ?) AND LANGUAGE = ?`, [user, language], (error, results, fields) => {
+            (SELECT ID FROM user WHERE EMAIL = ?) AND LANGUAGE = ?`, [user, language], (error, results, fields) => {
                 if(error) {
                     reject(error.message)
                 }
-				
-				if(results === undefined) {
-					reject('Any business card found!')
-				} else if(results.length === 1) {
+
+                if(results === undefined) {
+                    reject('Any business card found!')
+                } else if(results.length === 1) {
                     resolve(new BusinessCard(results[0]))
                 } else {
                     reject('No unique business card found!')
